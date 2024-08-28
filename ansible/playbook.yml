@@ -1,0 +1,12 @@
+---
+- name: Configure an ax25 dev environment with audio piping
+  hosts: all
+
+- name: Include base playbook
+  ansible.builtin.import_playbook: base.yml
+
+- name: Install and configure pipewire with pulseaudio
+  ansible.builtin.import_playbook: pipewire.yml
+
+- name: Install and configure direwolf
+  ansible.builtin.import_playbook: direwolf.yml

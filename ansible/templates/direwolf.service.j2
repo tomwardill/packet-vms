@@ -1,0 +1,12 @@
+[Unit]
+Description=Direwolf
+After=network.target
+
+[Service]
+Type=simple
+User={{ ansible_user_id }}
+ExecStart=/usr/bin/direwolf -t 0 -c /home/{{ ansible_user_id }}/direwolf/direwolf.conf
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

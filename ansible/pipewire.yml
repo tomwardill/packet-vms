@@ -1,0 +1,47 @@
+---
+- name: Install and configure pipewire with pulseaudio
+  hosts: all
+  tasks:
+    - name: Install standard dependencies
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        pkg:
+          - pipewire
+          - pipewire-pulse
+          - pulseaudio-utils
+          - pavucontrol
+
+    - name: Add the user to audio group
+      become: true
+      ansible.builtin.user:
+        name: "{{ ansible_user_id }}"
+        shell: /bin/bash
+        groups: sudo,audio
+        append: true
+
+    - name: Create pipewire config directory
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user_id }}/.config/pipewire/pipewire.conf.d"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0755'
+
+    - name: Create wireplumber config directory
+      ansible.builtin.file:
+        path: "/home/{{ ansible_user_id }}/.config/wireplumber/main.lua.d/"
+        state: directory
+        owner: "{{ ansible_user_id }}"
+        group: "{{ ansible_user_id }}"
+        mode: '0755'
+
+    - name: Add pulseaudio sink configuration
+      ansible.builtin.template:
+        src: templates/pulseaudio-sink.j2
+        dest: "/home/{{ ansible_user_id }}/.config/pipewire/pipewire.conf.d/pulseaudio-sink.conf"
+
+    - name: Add pipewire alsa configuration
+      ansible.builtin.template:
+        src: templates/pipewire-alsa.j2
+        dest: "/home/{{ ansible_user_id }}/.config/wireplumber/main.lua.d/50-pipewire-alsa.lua"

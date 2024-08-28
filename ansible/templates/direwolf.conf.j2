@@ -1,0 +1,63 @@
+#############################################################
+#                                                           #
+#               Configuration file for Dire Wolf            #
+#                                                           #
+#                   Linux version                           #
+#                                                           #
+#############################################################
+
+
+#############################################################
+#                                                           #
+#               FIRST AUDIO DEVICE PROPERTIES               #
+#               (Channel 0 + 1 if in stereo)                #
+#                                                           #
+#############################################################
+
+
+
+ADEVICE  plughw:1,0
+
+
+CHANNEL 0
+
+
+MYCALL {{ callsign }}
+
+#
+# Pick a suitable modem speed based on your situation.
+#	1200 	Most common for VHF/UHF.  This is the default if not specified.
+#	2400	QPSK compatible with MFJ-2400, and probably PK232-2400 & KPC-2400.
+#	300	Low speed for HF SSB.  Default tones 1600 & 1800.
+#	EAS	Emergency Alert System (EAS) Specific Area Message Encoding (SAME).
+#	9600	G3RUH style - Can't use Microphone and Speaker connections.
+#	AIS	International system for tracking ships on VHF.
+#			Also uses 9600 bps so Speaker connection won't work.
+#
+# In most cases you can just specify the speed.  Examples:
+#
+
+MODEM 1200
+#MODEM 9600
+
+
+PTT VOX
+
+
+#############################################################
+#                                                           #
+#               VIRTUAL TNC SERVER PROPERTIES               #
+#                                                           #
+#############################################################
+
+#
+# Dire Wolf acts as a virtual TNC and can communicate with
+# client applications by different protocols:
+#
+#	- the "AGW TCPIP Socket Interface" - default port 8000
+#	- KISS protocol over TCP socket - default port 8001
+#	- KISS TNC via pseudo terminal   (-p command line option)
+#
+
+AGWPORT 8000
+KISSPORT 8001

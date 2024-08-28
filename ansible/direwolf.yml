@@ -1,0 +1,58 @@
+---
+
+- name: Install and configure direwolf
+  hosts: all
+  tasks:
+
+  - name: Install standard dependencies
+    become: true
+    ansible.builtin.apt:
+      update_cache: true
+      pkg:
+        - libasound2-dev
+        - libudev-dev
+        - libavahi-client-dev
+        - alsa-utils
+
+  - name: Install packet radio node packages
+    become: true
+    ansible.builtin.apt:
+      update_cache: true
+      pkg:
+        - direwolf
+        - qtsoundmodem
+
+  - name: Add the user to audio group
+    become: true
+    ansible.builtin.user:
+      name: "{{ ansible_user_id }}"
+      shell: /bin/bash
+      groups: sudo,audio
+      append: true
+
+  - name: Create direwolf directory
+    ansible.builtin.file:
+      path: "/home/{{ ansible_user_id }}/direwolf"
+      state: directory
+      owner: "{{ ansible_user_id }}"
+      group: "{{ ansible_user_id }}"
+      mode: '0755'
+
+  - name: Configure Direwolf
+    ansible.builtin.template:
+      src: templates/direwolf.conf.j2
+      dest: "/home/{{ ansible_user_id }}/direwolf/direwolf.conf"
+
+  - name: Add direwolf to systemd
+    become: true
+    ansible.builtin.template:
+      src: templates/direwolf.service.j2
+      dest: "/etc/systemd/system/direwolf.service"
+
+  - name: Enable and start direwolf service
+    become: true
+    ansible.builtin.systemd:
+      name: direwolf
+      enabled: true
+      state: started
+      daemon_reload: true

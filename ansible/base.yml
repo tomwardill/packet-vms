@@ -1,0 +1,46 @@
+---
+
+- name: Configure base requirements
+  hosts: all
+  become: yes
+  tasks:
+
+  - name: Set vagrant user password
+    ansible.builtin.user:
+      name: vagrant
+      password: $1$SomeSalt$hgwu0g0i6rC6tadFj.71O0
+
+  - name: Add OARC repository
+    become: true
+    ansible.builtin.deb822_repository:
+      name: oarc
+      types: deb
+      uris: https://online-amateur-radio-club-m0ouk.github.io/oarc-packages
+      suites: '{{ ansible_distribution_release }}'
+      components: main
+      architectures: amd64
+      signed_by: https://online-amateur-radio-club-m0ouk.github.io/oarc-packages/hibby.key
+
+  - name: 'Install desktop environment'
+    ansible.builtin.apt:
+      update_cache: true
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - task-gnome-desktop
+
+  - name: Install useful packages
+    ansible.builtin.apt:
+      update_cache: true
+      name: "{{ item }}"
+      state: present
+    with_items:
+      - vim
+      - git
+      - curl
+      - wget
+      - unzip
+      - atool
+      - htop
+      - tmux
+      - build-essential

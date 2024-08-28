@@ -1,0 +1,35 @@
+context.modules = [
+    {
+        {
+            name = libpipewire-module-rtp-source
+            args = {
+                local.ifname = "eth1"
+                source.ip = 0.0.0.0
+                source.port = 46000
+                sess.latency.msec = 100
+                stream.props = {
+                    node.name = "rtp-source"
+                    node.description = "RTP-source"
+                }
+            }
+        }
+    },
+    {
+        name = libpipewire-module-rtp-sink
+        args = {
+            local.ifname = "eth1"
+            {% if callsign == "alpha" %}
+            destination.ip = "{{ beta }}"
+            {% elif callsign == "beta" %}
+            destination.ip = "{{ alpha }}"
+            {% endif %}
+            destination.port = 46000
+            stream.props = {
+                node.name = "rtp-sink"
+                node.description = "RTP"
+                media.class = "Audio/Sink"
+                sess.sap.announce=true
+            }
+        }
+    }
+]
